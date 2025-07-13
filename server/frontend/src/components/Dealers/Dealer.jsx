@@ -24,16 +24,27 @@ const Dealer = () => {
   let reviews_url = root_url+`djangoapp/reviews/dealer/${id}`;
   let post_review = root_url+`postreview/${id}`;
   
-  const get_dealer = async ()=>{
-    const res = await fetch(dealer_url, {
-      method: "GET"
-    });
-    const retobj = await res.json();
+//   const get_dealer = async ()=>{
+//     const res = await fetch(dealer_url, {
+//       method: "GET"
+//     });
+//     const retobj = await res.json();
     
-    if(retobj.status === 200) {
-      setDealer(retobj.dealer)
-    }
+//     if(retobj.status === 200) {
+//       setDealer(retobj.dealer)
+//     }
+//   }
+
+const get_dealer = async () => {
+  const res = await fetch(dealer_url, {
+    method: "GET"
+  });
+  const retobj = await res.json();
+
+  if (retobj.status === 200 && Array.isArray(retobj.dealer)) {
+    setDealer(retobj.dealer[0]); // ✅ Pick the first item in the array
   }
+};
 
   const get_reviews = async ()=>{
     const res = await fetch(reviews_url, {
@@ -70,8 +81,22 @@ return(
   <div style={{margin:"20px"}}>
       <Header/>
       <div style={{marginTop:"10px"}}>
+{
+  dealer.full_name ? (
+    <>
       <h1 style={{color:"grey"}}>{dealer.full_name}{postReview}</h1>
-      <h4  style={{color:"grey"}}>{dealer['city']},{dealer['address']}, Zip - {dealer['zip']}, {dealer['state']} </h4>
+      <h4 style={{color:"grey"}}>
+        {dealer.city}, {dealer.address}, Zip - {dealer.zip}, {dealer.state}
+      </h4>
+    </>
+  ) : (
+    <div>Loading dealer info...</div>
+  )
+}
+
+
+      {/* <h1 style={{color:"grey"}}>{dealer.full_name}{postReview}</h1>
+      <h4  style={{color:"grey"}}>{dealer['city']},{dealer['address']}, Zip - {dealer['zip']}, {dealer['state']} </h4> */}
       </div>
       <div class="reviews_panel">
       {reviews.length === 0 && unreviewed === false ? (
